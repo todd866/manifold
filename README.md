@@ -1,36 +1,65 @@
 # Manifold
 
-Unified coordinate pool, Ed25519-signed curation lenses, canary-verified contributor reputation, and Model Context Protocol (MCP) hub across three Bring-Your-Own-Content surfaces:
+**Open coordinate pool, Ed25519-signed curation lenses, canary-verified contributor reputation, and Model Context Protocol (MCP) hub.**
 
-- **Onto the TV (`tv`)** — films, series, shorts, and channel lenses (`wikidata:Q...`, `ia:...`, `imdb:tt...`).
-- **Onto the Radio (`radio`)** — songs, station lenses, and transition geometry (`mbid:...`, `isrc:...`).
-- **Cohort (`cohort`)** — spaced-repetition medical questions, concept neighbourhoods, and exam blueprints (`cohort:...`, `doi:...`, `pmid:...`).
+The ecosystem is built around a simple split: **thin native frontends + open-source showcase media + Manifold embeddings** live in public repos, while **you and your AI agent run your own backend** against content you supply yourself. Zero copyrighted media, local filesystem paths, raw file hashes, or personal histories ever enter Manifold.
 
-Zero copyrighted media, local filesystem paths, raw file hashes, or household histories enter Manifold. Every submission passes fail-closed boundary validation (`src/lib/boundary.ts`), Ed25519 signature verification (`src/lib/crypto.ts`), and canary cosine auditing (`src/lib/reputation.ts`).
+See [`docs/BYO-AI-ARCHITECTURE.md`](docs/BYO-AI-ARCHITECTURE.md) for the full 3-layer blueprint and [`docs/PUBLIC-PRIVATE-SPLIT.md`](docs/PUBLIC-PRIVATE-SPLIT.md) for how private/public repos are kept cleanly separated.
 
-## Endpoints
+## Surfaces & Open Showcases
+
+| Domain | Client Surface | Canonical Work IDs | Open Showcase Built In |
+|---|---|---|---|
+| `tv` | [**Onto the TV**](https://github.com/todd866/onto-the-tv) | `wikidata:Q...`, `ia:...`, `imdb:tt...`, `yt:...` | 4 Blender Open Movies (*Sintel*, *Tears of Steel*, *Big Buck Bunny*, *Elephants Dream*) + 24 coordinates, 3 signed channels |
+| `radio` | [**Onto the Radio**](https://github.com/todd866/onto-the-radio) | `mbid:...`, `isrc:...` | 10 CC0/PD Wikimedia MP3 streams + 38 coordinates (incl. Jazz *Miles orbit* & Classical *Heavy & hypnotic*), 5 signed stations |
+| `cohort` | [**Cohort**](https://github.com/todd866/cohort) | `cohort:...`, `doi:...`, `pmid:...` | 36 CC BY 4.0 medical items in `canon-seed.json`, 2 signed exam blueprints |
+
+## HTTP API (`https://manifold-chi.vercel.app`)
 
 | Route | Purpose |
 |---|---|
 | `GET /` | Single-viewport instrument console (`Map`, `Lenses`, `Trust`, `MCP`) |
 | `GET /api/v1/status` | Pool telemetry across `tv`, `radio`, and `cohort` |
 | `GET /api/v1/works` | Search canonical works or inspect nearest neighbours (`?workId=...`) |
-| `GET /api/v1/shard/:prefix` | k-anonymous hex shard (`00`..`ff`) for private local library join |
-| `GET /api/v1/bridge?a=...&b=...` | Geodesic midpoint search between two works/concepts |
-| `GET,POST /api/v1/lenses` | List, apply, or publish Ed25519-signed Lenses |
-| `POST /api/v1/contribute` | Submit signed vector batches with automatic canary verification |
-| `GET /api/v1/reputation` | Inspect Beta-Binomial contributor trust & compute credits |
+| `GET /api/v1/shard/:prefix` | k-anonymous 2-hex prefix (`sha256(workId)[:2]`, `00`..`ff`) for private local library join |
+| `GET /api/v1/bridge?a=...&b=...` | Latent midpoint discovery between two works or concepts |
+| `GET,POST /api/v1/lenses` | List, apply, or publish Ed25519-signed curation Lenses |
+| `POST /api/v1/contribute` | Submit signed vector batches checked by boundary (`src/lib/boundary.ts`) & canary cosine (`src/lib/reputation.ts`) gates |
+| `GET /api/v1/reputation` | Inspect `Beta(alpha, beta)` contributor trust tiers & compute credits |
 | `GET,POST /api/mcp` | Streamable HTTP JSON-RPC 2.0 MCP server (8 tools) |
 
-## CLI & Local MCP
+## Bring Your Own AI Backend (MCP + Reference Starter)
+
+Give your AI coding assistant access to Manifold's HTTP MCP endpoint:
+
+```json
+{
+  "mcpServers": {
+    "manifold": {
+      "url": "https://manifold-chi.vercel.app/api/mcp"
+    }
+  }
+}
+```
+
+Or run the local stdio MCP servers directly:
+
+- `npm run mcp` (`bin/manifold-mcp.ts`) — `manifold_status`, `manifold_search`, `manifold_neighbours`, `manifold_bridge`, `manifold_lenses`, `manifold_apply_lens`, `manifold_contribute`, `manifold_reputation`
+- `node --experimental-strip-types bin/onto-radio-mcp.ts` — `ontoradio_stations`, `ontoradio_sequence`, `ontoradio_transition_bridge`
+- `node --experimental-strip-types bin/onto-tv-mcp.ts` — `ontotv_channels`, `ontotv_rank_with_lens`, `ontotv_bridge_double_feature`
+- `node --experimental-strip-types bin/cohort-mcp.ts` — `cohort_blueprints`, `cohort_next_concepts`
+
+For an end-to-end working personal music server using k-anonymous `/api/v1/shard/:prefix` joins, see Onto the Radio's [`examples/byo-backend/`](https://github.com/todd866/onto-the-radio/tree/main/examples/byo-backend) and [`docs/BYO-BACKEND.md`](https://github.com/todd866/onto-the-radio/blob/main/docs/BYO-BACKEND.md).
+
+## Development
 
 ```bash
-npm test                     # Boundary, Ed25519, canary spoofing, lens & MCP tests
-npm run build                # Next.js production build
-npm run mcp                  # Stdio MCP server (local or MANIFOLD_REMOTE_URL)
-python3 tools/manifold_sync.py --help  # Export/import across onto-the-tv, music-core, and cohort
+npm test                               # Boundary, Ed25519, canary spoofing, lens & MCP tests
+npx tsc --noEmit                       # TypeScript check
+npm run build                          # Next.js production build
+python3 tools/manifold_sync.py --help  # Fail-closed exporter & shard CLI
 ```
 
 ## Licence
 
-MIT © Ian Todd. Seed embeddings cover open public-domain cinema, CC0/MusicBrainz recordings, and CC BY 4.0 USMLE Step 1 items from [Cohort](https://cohort.md).
+MIT. Seed embeddings reference public-domain cinema, CC0/Public-Domain MusicBrainz recordings, and CC BY 4.0 USMLE Step 1 items from [Cohort](https://cohort.md).

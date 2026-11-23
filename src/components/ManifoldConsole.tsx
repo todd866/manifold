@@ -718,6 +718,31 @@ export function ManifoldConsole({ works, lenses, contributors, mcpTools }: Props
               </button>
             </div>
             <div className="pane-scroll">
+              <div className="detail-card">
+                <p className="detail-meta">
+                  Bring your own backend with your AI: connect to <span className="mono">/api/mcp</span> or
+                  pull k-anonymous shards (<span className="mono">/api/v1/shard/:prefix</span>) to
+                  organize your own media behind native frontends.
+                </p>
+                <div className="inst-sub" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  <a
+                    href="https://github.com/todd866/onto-the-radio/blob/main/docs/BYO-BACKEND.md"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: 'var(--accent-radio)', textDecoration: 'none' }}
+                  >
+                    Onto the Radio BYO spec
+                  </a>
+                  <a
+                    href="https://github.com/todd866/manifold/blob/main/docs/BYO-AI-ARCHITECTURE.md"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: 'var(--accent-radio)', textDecoration: 'none' }}
+                  >
+                    Architecture
+                  </a>
+                </div>
+              </div>
               <pre className="code-box mono" style={{ marginBottom: 10 }}>
                 {mcpConfigSnippet}
               </pre>
