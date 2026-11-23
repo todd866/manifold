@@ -1,0 +1,26 @@
+{
+  "name": "manifold",
+  "version": "0.1.0",
+  "description": "Unified embedding pool, signed lenses, canary reputation, and MCP hub for Onto the TV, Onto the Radio, and Cohort.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3340",
+    "build": "next build",
+    "start": "next start --port 3340",
+    "test": "node --test --experimental-strip-types tests/*.test.ts",
+    "mcp": "node --experimental-strip-types bin/manifold-mcp.ts"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.20",
+    "next": "^15.5.29",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "playwright": "^1.58.0",
+    "typescript": "5.9"
+  }
+}
