@@ -35,3 +35,17 @@ When exporting embeddings from private libraries into Manifold, [`tools/manifold
 - Strips `/Users/`, `/Volumes/`, Windows paths, and media extensions (`.mkv`, `.mp4`, `.m4a`, `.flac`, etc.).
 - Rejects raw file SHA-1/SHA-256 hex strings and private field names (`filepath`, `infohash`, `household`, `viewerName`).
 - Only exports works resolvable to public canonical prefixes (`wikidata:Q...`, `ia:...`, `imdb:tt...`, `yt:...`, `mbid:...`, `isrc:...`, `cohort:...`, `doi:...`, `pmid:...`).
+
+## Repository Split Matrix
+
+| Project | Private Source Repo | Public Mirror Repo | Publish / Export Mechanism |
+|---|---|---|---|
+| Onto the TV | `todd866/onto-the-tv-full` | `todd866/onto-the-tv` | `scripts/publish-public.sh` |
+| Cohort | `todd866/md3` | `todd866/cohort` | Open export pipeline |
+| Fleet | `todd866/fleet-private` | `todd866/fleet` | `tools/public-export/publish.sh` |
+| Isobar | `todd866/isobar-private` / `isobar-data-private` | `todd866/isobar` / `isobar-data` | Split snapshot publish |
+| 6ian Radio | `todd866/music-radio` | `todd866/6ian-radio` | `tools/public-export/publish.sh` |
+| Music Core | `todd866/music-core-private` | `todd866/music-core` | `tools/public-export/publish.sh` |
+| Onto the Radio | `todd866/onto-the-radio-private` | `todd866/onto-the-radio` | `scripts/publish-public.sh` |
+| Manifold | `todd866/manifold-private` | `todd866/manifold` | `scripts/publish-public.sh` |
+| Glancebar | `todd866/glancebar-private` | `todd866/glancebar` | `scripts/publish-public.sh` |

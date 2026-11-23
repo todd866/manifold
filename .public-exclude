@@ -1,0 +1,9 @@
+# Paths omitted from public snapshots (scripts/publish-public.sh).
+shots
+.vercel
+.claude
+.fleet
+.playwright-mcp
+docs/superpowers
+docs/TODO.md
+scripts/public-images-approved.txt
