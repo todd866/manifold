@@ -19,6 +19,9 @@ from typing import Any
 
 import numpy as np
 import subprocess
+import time
+import urllib.parse
+import urllib.request
 
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
@@ -259,12 +262,15 @@ TV_WORKS: list[dict[str, Any]] = [
     },
 ]
 
-# 2. Radio Domain: Canonical MusicBrainz Recordings (real MBIDs + mood/energy/heaviness axes + CC0 streamable showcase tracks)
+# 2. Radio Domain: Canonical MusicBrainz Recordings (real/deterministic MBIDs + gateway Classical & Jazz + CC0 full streams)
 RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:f0d2b6c2-9f4e-4b3b-891c-8398409e2736",
         "title": "Gymnopédie No. 1 (Lent et douloureux)",
-        "creator": "Erik Satie · Public Domain Ensemble",
+        "shortTitle": "Gymnopédie No. 1",
+        "hook": "Minimal nocturnal piano",
+        "category": "classical",
+        "creator": "Erik Satie · Kevin MacLeod (CC BY)",
         "year": 1888,
         "kind": "ambient · chamber piano",
         "energy": 0.12,
@@ -276,6 +282,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:7f5c1a38-44d3-4259-9a81-16f17eb8bc31",
         "title": "Goldberg Variations, BWV 988: Aria",
+        "shortTitle": "Goldberg: Aria",
+        "hook": "Crisp solo keyboard",
+        "category": "classical",
         "creator": "Johann Sebastian Bach · Kimiko Ishizaka (CC0)",
         "year": 2012,
         "kind": "classical · solo keyboard",
@@ -288,6 +297,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:b30c5632-0842-4c9a-9459-6b525a67b87d",
         "title": "Clair de Lune (Suite bergamasque)",
+        "shortTitle": "Clair de Lune",
+        "hook": "Shimmering debussy piano",
+        "category": "classical",
         "creator": "Claude Debussy · Laurens Goedhart (CC BY)",
         "year": 1905,
         "kind": "impressionist · nocturnal piano",
@@ -300,6 +312,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:41b02769-8872-4a45-8754-2b79383c3614",
         "title": "Cello Suite No. 1 in G Major, Prelude",
+        "shortTitle": "Cello Suite No. 1",
+        "hook": "Resonant solo cello",
+        "category": "classical",
         "creator": "Johann Sebastian Bach · John Michel (CC BY-SA)",
         "year": 1720,
         "kind": "chamber · solo strings",
@@ -310,8 +325,113 @@ RADIO_WORKS: list[dict[str, Any]] = [
         "summary": "Unbroken resonant cello arpeggios climbing steadily with warm wooden harmonics and focused momentum.",
     },
     {
+        "workId": "mbid:92c48433-431b-52c5-ba0a-02cb4086a048",
+        "title": "The Planets, Op. 32: I. Mars, the Bringer of War",
+        "shortTitle": "Mars (The Planets)",
+        "hook": "5/4 proto-metal stomp",
+        "category": "classical",
+        "creator": "Gustav Holst · US Air Force Band (PD)",
+        "year": 1918,
+        "kind": "classical · orchestral thunder",
+        "energy": 0.89,
+        "heaviness": 0.92,
+        "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/5/54/Gustav_Holst_-_the_planets%2C_op._32_-_i._mars%2C_the_bringer_of_war.ogg/Gustav_Holst_-_the_planets%2C_op._32_-_i._mars%2C_the_bringer_of_war.ogg.mp3",
+        "durationSec": 452,
+        "summary": "Relentless asymmetric 5/4 ostinato and low brass stomp that directly birthed heavy film scoring and metal riffs.",
+    },
+    {
+        "workId": "mbid:20462048-c5fa-5ab4-8c39-08baa105ed0a",
+        "title": "Romeo and Juliet, Op. 64: Dance of the Knights",
+        "shortTitle": "Dance of the Knights",
+        "hook": "Menacing bass & brass",
+        "category": "classical",
+        "creator": "Sergei Prokofiev",
+        "year": 1938,
+        "kind": "classical · dark orchestral",
+        "energy": 0.82,
+        "heaviness": 0.88,
+        "durationSec": 330,
+        "summary": "Crushing low-string march and jagged brass stabs with sub-bass weight worthy of modern hip-hop production.",
+    },
+    {
+        "workId": "mbid:9db35866-fbe8-5540-92a0-852c87a51e04",
+        "title": "Recomposed: Vivaldi Four Seasons – Spring 1",
+        "shortTitle": "Spring 1",
+        "hook": "Electronic Vivaldi pulse",
+        "category": "classical",
+        "creator": "Max Richter",
+        "year": 2012,
+        "kind": "modern classical · post-minimalism",
+        "energy": 0.64,
+        "heaviness": 0.41,
+        "durationSec": 152,
+        "summary": "Baroque solo violin motifs rewired over subterranean modular synth sub-bass and hypnotic loop repetition.",
+    },
+    {
+        "workId": "mbid:ca34e1b0-9072-5ab4-b051-0b14239aa661",
+        "title": "The Four Seasons, Summer: Presto",
+        "shortTitle": "Summer: Presto",
+        "hook": "Baroque speed shred",
+        "category": "classical",
+        "creator": "Antonio Vivaldi · John Harrison (CC BY-SA)",
+        "year": 1725,
+        "kind": "classical · baroque shred",
+        "energy": 0.91,
+        "heaviness": 0.71,
+        "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/fa/Vivaldi_-_Four_Seasons_2_Summer_mvt_3_Presto_-_John_Harrison_violin.oga/Vivaldi_-_Four_Seasons_2_Summer_mvt_3_Presto_-_John_Harrison_violin.oga.mp3",
+        "durationSec": 168,
+        "summary": "Relentless minor-key string storm and blazing sixteenth-note violin sweeps at pure punk tempo.",
+    },
+    {
+        "workId": "mbid:ab2c5006-d203-582c-9e3a-04d9726449b5",
+        "title": "Koyaanisqatsi",
+        "shortTitle": "Koyaanisqatsi",
+        "hook": "Hypnotic organ & drive",
+        "category": "classical",
+        "creator": "Philip Glass",
+        "year": 1982,
+        "kind": "minimalism · synth-orchestral",
+        "energy": 0.72,
+        "heaviness": 0.79,
+        "durationSec": 210,
+        "summary": "Monolithic pipe-organ bass pedals and chanting arpeggios engineered like pure trance architecture.",
+    },
+    {
+        "workId": "mbid:1b9fd9b7-9ca2-5eb7-bed9-e5e447ecfb9b",
+        "title": "Gnossienne No. 1 (Lent)",
+        "shortTitle": "Gnossienne No. 1",
+        "hook": "Dark trip-hop loop",
+        "category": "classical",
+        "creator": "Erik Satie · Public Domain",
+        "year": 1890,
+        "kind": "classical · nocturnal piano",
+        "energy": 0.21,
+        "heaviness": 0.29,
+        "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/91/Satie_-_Gnossienne_1.ogg/Satie_-_Gnossienne_1.ogg.mp3",
+        "durationSec": 218,
+        "summary": "Hypnotic minor-mode piano vamp with smoky chromatic ornaments that sounds ready-made for lo-fi beats.",
+    },
+    {
+        "workId": "mbid:9eaa00d3-48b8-5aff-8261-9a358ad3f8ad",
+        "title": "Night on Bald Mountain",
+        "shortTitle": "Night on Bald Mountain",
+        "hook": "Dark orchestral menace",
+        "category": "classical",
+        "creator": "Modest Mussorgsky · Skidmore Orchestra (PD)",
+        "year": 1867,
+        "kind": "classical · dramatic tone poem",
+        "energy": 0.85,
+        "heaviness": 0.86,
+        "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/ca/Modest_Mussorgsky_-_night_on_bald_mountain.ogg/Modest_Mussorgsky_-_night_on_bald_mountain.ogg.mp3",
+        "durationSec": 672,
+        "summary": "Slashing string tremolo and thunderous brass fanfares erupting from subterranean gloom.",
+    },
+    {
         "workId": "mbid:8e8c816f-6935-48b4-82e1-60040c803025",
         "title": "Music for 18 Musicians: Pulses",
+        "shortTitle": "Music for 18 Musicians",
+        "hook": "Pulsing marimba trance",
+        "category": "classical",
         "creator": "Steve Reich",
         "year": 1978,
         "kind": "minimalism · ensemble",
@@ -322,6 +442,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:1b642322-7c90-4a8e-9b52-33f672941a64",
         "title": "1/1 (Music for Airports)",
+        "shortTitle": "1/1 (Airports)",
+        "hook": "Tape-loop piano drift",
+        "category": "electronic",
         "creator": "Brian Eno",
         "year": 1978,
         "kind": "ambient · tape loops",
@@ -332,6 +455,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:9d187e42-3a61-4d0e-9b81-2f10772a3329",
         "title": "Xtal",
+        "shortTitle": "Xtal",
+        "hook": "Warm VHS ambient techno",
+        "category": "electronic",
         "creator": "Aphex Twin",
         "year": 1992,
         "kind": "ambient techno · idm",
@@ -342,6 +468,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:c903284f-41d2-4f93-a274-4e82917b5418",
         "title": "Roygbiv",
+        "shortTitle": "Roygbiv",
+        "hook": "SH-101 hip-hop synth",
+        "category": "electronic",
         "creator": "Boards of Canada",
         "year": 1998,
         "kind": "downtempo · analogue electronic",
@@ -352,6 +481,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:e317a495-2189-4138-8635-5a817c910421",
         "title": "Hallogallo",
+        "shortTitle": "Hallogallo",
+        "hook": "Hypnotic 4/4 motorik",
+        "category": "rock",
         "creator": "NEU!",
         "year": 1972,
         "kind": "krautrock · motorik",
@@ -362,6 +494,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:a4298374-9201-438a-b829-174829104722",
         "title": "Autobahn",
+        "shortTitle": "Autobahn",
+        "hook": "Kosmische synth cruise",
+        "category": "electronic",
         "creator": "Kraftwerk",
         "year": 1974,
         "kind": "electronic · kosmische",
@@ -372,6 +507,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:51829304-1290-4a81-9f31-882910492811",
         "title": "Disorder",
+        "shortTitle": "Disorder",
+        "hook": "Lead bass & stark snares",
+        "category": "rock",
         "creator": "Joy Division",
         "year": 1979,
         "kind": "post-punk",
@@ -382,6 +520,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:62819203-4821-4c92-8a12-991029384712",
         "title": "Once in a Lifetime",
+        "shortTitle": "Once in a Lifetime",
+        "hook": "Poly-rhythmic art funk",
+        "category": "rock",
         "creator": "Talking Heads",
         "year": 1980,
         "kind": "post-punk · afrobeat art-pop",
@@ -392,6 +533,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:73920194-5932-4d03-9b23-002130495823",
         "title": "Blue Monday",
+        "shortTitle": "Blue Monday",
+        "hook": "DMX drum machine pulse",
+        "category": "electronic",
         "creator": "New Order",
         "year": 1983,
         "kind": "synth-pop · electro",
@@ -402,6 +546,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:84031205-6043-4e14-ac34-113241506934",
         "title": "Everything in Its Right Place",
+        "shortTitle": "In Its Right Place",
+        "hook": "Prophet-5 glitch loop",
+        "category": "electronic",
         "creator": "Radiohead",
         "year": 2000,
         "kind": "art-electronic · post-rock",
@@ -412,6 +559,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:95142316-7154-4f25-bd45-224352617045",
         "title": "So What",
+        "shortTitle": "So What",
+        "hook": "Walking bass & space",
+        "category": "jazz",
         "creator": "Miles Davis",
         "year": 1959,
         "kind": "modal jazz",
@@ -420,8 +570,106 @@ RADIO_WORKS: list[dict[str, Any]] = [
         "summary": "Double-bass call answered by two-chord Dorian horn voicings and unhurried trumpet phrasing on Kind of Blue.",
     },
     {
+        "workId": "mbid:a21a9293-31f7-504c-9d9f-d4a4ec0bd6e2",
+        "title": "In a Silent Way",
+        "shortTitle": "In a Silent Way",
+        "hook": "Electric Rhodes trance",
+        "category": "jazz",
+        "creator": "Miles Davis",
+        "year": 1969,
+        "kind": "electric jazz · ambient fusion",
+        "energy": 0.31,
+        "heaviness": 0.24,
+        "summary": "Floating dual electric pianos, clean guitar shimmer, and Teo Macero tape-spliced ambient groove — pure late-night headphones.",
+    },
+    {
+        "workId": "mbid:6cf409af-8afa-5d5b-bcd0-358795af40b4",
+        "title": "Générique (Ascenseur pour l'échafaud)",
+        "shortTitle": "Générique",
+        "hook": "Dark Paris noir trumpet",
+        "category": "jazz",
+        "creator": "Miles Davis",
+        "year": 1958,
+        "kind": "cool jazz · film noir",
+        "energy": 0.24,
+        "heaviness": 0.26,
+        "summary": "Late-night muted trumpet improvised live to French noir footage over brushed snare and solitary walking bass.",
+    },
+    {
+        "workId": "mbid:e941c1ff-3620-50f4-8590-9df10c78eceb",
+        "title": "Time Moves Slow",
+        "shortTitle": "Time Moves Slow",
+        "hook": "Hip-hop soul crossover",
+        "category": "jazz",
+        "creator": "BADBADNOTGOOD · Sam Herring",
+        "year": 2016,
+        "kind": "modern jazz · soul pocket",
+        "energy": 0.42,
+        "heaviness": 0.38,
+        "summary": "Dusty live-kit pocket, warm analog keys, and smoky jazz chord changes wired straight into modern hip-hop swing.",
+    },
+    {
+        "workId": "mbid:912241ed-7bf9-5ab4-af62-b2eede1437ba",
+        "title": "Chameleon",
+        "shortTitle": "Chameleon",
+        "hook": "ARP Odyssey bassline",
+        "category": "jazz",
+        "creator": "Herbie Hancock",
+        "year": 1973,
+        "kind": "jazz funk · fusion",
+        "energy": 0.78,
+        "heaviness": 0.61,
+        "summary": "Rubber ARP Odyssey synth bassline and Clavinet pocket that laid the blueprint for West Coast funk and G-funk.",
+    },
+    {
+        "workId": "mbid:442026df-9ec1-5b41-a50a-c98b47617684",
+        "title": "Haitian Fight Song",
+        "shortTitle": "Haitian Fight Song",
+        "hook": "Snarling upright bass",
+        "category": "jazz",
+        "creator": "Charles Mingus",
+        "year": 1957,
+        "kind": "post-bop · jazz groove",
+        "energy": 0.74,
+        "heaviness": 0.66,
+        "summary": "Furious bowed-and-plucked upright bass riff that erupts like an acoustic punk anthem.",
+    },
+    {
+        "workId": "mbid:f4b1a3d0-52e1-5218-a4e1-2830a0b74211",
+        "title": "Acid Jazz (Extended Rhodes Mix)",
+        "shortTitle": "Acid Jazz",
+        "hook": "Breakbeat Rhodes pocket",
+        "category": "jazz",
+        "creator": "Kevin MacLeod (CC BY)",
+        "year": 2014,
+        "kind": "acid jazz · hip-hop groove",
+        "energy": 0.62,
+        "heaviness": 0.44,
+        "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/26/Kevin_MacLeod_-_AcidJazz.ogg/Kevin_MacLeod_-_AcidJazz.ogg.mp3",
+        "durationSec": 218,
+        "summary": "Tight head-nodding breakbeat drums paired with warm Rhodes electric piano and punchy horn stabs.",
+    },
+    {
+        "workId": "mbid:c314de09-6412-59f2-9214-b1721c22f902",
+        "title": "Night on the Docks (Sax Noir)",
+        "shortTitle": "Night on the Docks",
+        "hook": "Smoky noir sax & bass",
+        "category": "jazz",
+        "creator": "Kevin MacLeod (CC BY)",
+        "year": 2013,
+        "kind": "cool jazz · noir",
+        "energy": 0.29,
+        "heaviness": 0.25,
+        "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/2d/Kevin_MacLeod_-_Night_on_the_Docks_-_Sax.ogg/Kevin_MacLeod_-_Night_on_the_Docks_-_Sax.ogg.mp3",
+        "durationSec": 206,
+        "summary": "Rainy midnight walking upright bass, brushed ride cymbal, and breathy tenor saxophone without clutter.",
+    },
+    {
         "workId": "mbid:06253427-8265-4036-ce56-335463728156",
         "title": "Naima",
+        "shortTitle": "Naima",
+        "hook": "Suspended horn ballad",
+        "category": "jazz",
         "creator": "John Coltrane",
         "year": 1959,
         "kind": "jazz ballad",
@@ -432,6 +680,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:17364538-9376-4147-df67-446574839267",
         "title": "Teardrop",
+        "shortTitle": "Teardrop",
+        "hook": "Bristol dub trip-hop",
+        "category": "electronic",
         "creator": "Massive Attack",
         "year": 1998,
         "kind": "trip-hop",
@@ -442,6 +693,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:28475649-0487-4258-e078-557685940378",
         "title": "Archangel",
+        "shortTitle": "Archangel",
+        "hook": "Rain-crackle 2-step dub",
+        "category": "electronic",
         "creator": "Burial",
         "year": 2007,
         "kind": "uk garage · future dub",
@@ -452,6 +706,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:39586750-1598-4369-f189-668796051489",
         "title": "Windowlicker",
+        "shortTitle": "Windowlicker",
+        "hook": "Micro-edited breakbeats",
+        "category": "electronic",
         "creator": "Aphex Twin",
         "year": 1999,
         "kind": "idm · electro-funk",
@@ -462,6 +719,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:40697861-2609-4470-a290-779807162590",
         "title": "Breathe",
+        "shortTitle": "Breathe",
+        "hook": "Big-beat snare slam",
+        "category": "electronic",
         "creator": "The Prodigy",
         "year": 1996,
         "kind": "big beat · breakbeat",
@@ -472,6 +732,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:51708972-3710-4581-b301-880918273601",
         "title": "N.Y. State of Mind",
+        "shortTitle": "N.Y. State of Mind",
+        "hook": "Premier piano boom-bap",
+        "category": "hiphop",
         "creator": "Nas",
         "year": 1994,
         "kind": "boom-bap hip-hop",
@@ -482,6 +745,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:62819083-4821-4692-c412-991029384712",
         "title": "Accordion",
+        "shortTitle": "Accordion",
+        "hook": "Madlib sample loop",
+        "category": "hiphop",
         "creator": "Madvillain",
         "year": 2004,
         "kind": "abstract hip-hop",
@@ -492,6 +758,9 @@ RADIO_WORKS: list[dict[str, Any]] = [
     {
         "workId": "mbid:73920194-5932-4703-d523-002130495823",
         "title": "Pink Moon",
+        "shortTitle": "Pink Moon",
+        "hook": "Close acoustic fingerpick",
+        "category": "rock",
         "creator": "Nick Drake",
         "year": 1972,
         "kind": "folk · acoustic",
@@ -501,7 +770,10 @@ RADIO_WORKS: list[dict[str, Any]] = [
     },
     {
         "workId": "mbid:84031205-6043-4814-e634-113241506934",
-        "title": " Avril 14th",
+        "title": "Avril 14th",
+        "shortTitle": "Avril 14th",
+        "hook": "Delicate Disklavier keys",
+        "category": "classical",
         "creator": "Aphex Twin",
         "year": 2001,
         "kind": "modern classical · Disklavier",
@@ -606,6 +878,38 @@ def sign_lens(lens_unsigned: dict[str, Any], priv_pkcs8_b64: str) -> dict[str, A
     out = dict(lens_unsigned)
     out["signature"] = sig_b64url
     return out
+
+
+def lookup_apple_music(title: str, creator: str) -> dict[str, str]:
+    primary = creator.split("·")[0].split("(")[0].strip()
+    if "Kevin MacLeod" in creator:
+        return {}
+    if primary in ("Public Domain Ensemble", "Public Domain"):
+        primary = title
+    query = f"{primary} {title}"
+    url = "https://itunes.apple.com/search?" + urllib.parse.urlencode({
+        "term": query, "media": "music", "entity": "song", "limit": 1
+    })
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "OntoTheRadio/1.0 (https://github.com/todd866/onto-the-radio)"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            res = json.loads(r.read().decode()).get("results", [])
+        if not res:
+            return {}
+        x = res[0]
+        out: dict[str, str] = {}
+        art = (x.get("artworkUrl100") or "").replace("100x100bb", "600x600bb")
+        if art.startswith("https://"):
+            out["artUrl"] = art
+        prev = x.get("previewUrl") or ""
+        if prev.startswith("https://"):
+            out["previewUrl"] = prev
+        view = x.get("trackViewUrl") or ""
+        if view.startswith("https://"):
+            out["appleMusicUrl"] = view
+        return out
+    except Exception:
+        return {}
 
 
 def main() -> None:
@@ -722,9 +1026,28 @@ def main() -> None:
             "contributor": steward_issuer if dom != "cohort" else med_issuer,
             "verifiedCanary": 0.996,
         }
-        for opt_key in ("mark", "streamUrl", "durationSec", "energy", "heaviness", "difficulty", "ladder"):
+        for opt_key in (
+            "mark",
+            "streamUrl",
+            "previewUrl",
+            "artUrl",
+            "appleMusicUrl",
+            "shortTitle",
+            "hook",
+            "category",
+            "durationSec",
+            "energy",
+            "heaviness",
+            "difficulty",
+            "ladder",
+        ):
             if r.get(opt_key) is not None:
                 entry[opt_key] = r[opt_key]
+        if dom == "radio":
+            am = lookup_apple_music(r.get("shortTitle") or r["title"], r["creator"])
+            for k, v in am.items():
+                entry.setdefault(k, v)
+            time.sleep(0.05)
         works_out.append(entry)
 
     now_iso = "2026-11-23T02:35:00Z"
@@ -907,6 +1230,78 @@ def main() -> None:
                         "from": "mbid:7f5c1a38-44d3-4259-9a81-16f17eb8bc31",
                         "to": "mbid:41b02769-8872-4a45-8754-2b79383c3614",
                         "weight": 0.95,
+                    },
+                ],
+            },
+        ),
+        (
+            steward_priv,
+            {
+                "id": "lens:radio:jazz-miles-orbit",
+                "domain": "radio",
+                "name": "Jazz, Miles orbit",
+                "summary": "Modal space, electric Rhodes groove, hip-hop horns, and smoky noir sax",
+                "issuer": steward_issuer,
+                "issuerHandle": "canon.steward",
+                "modelId": MODEL_ID,
+                "version": 1,
+                "createdAt": now_iso,
+                "subscribers": 412,
+                "completionRate": 0.95,
+                "anchors": [
+                    {"workId": "mbid:95142316-7154-4f25-bd45-224352617045", "weight": 1.0, "mark": "good"},
+                    {"workId": "mbid:a21a9293-31f7-504c-9d9f-d4a4ec0bd6e2", "weight": 0.96, "mark": "good"},
+                    {"workId": "mbid:6cf409af-8afa-5d5b-bcd0-358795af40b4", "weight": 0.92, "mark": "good"},
+                    {"workId": "mbid:e941c1ff-3620-50f4-8590-9df10c78eceb", "weight": 0.90, "mark": "good"},
+                    {"workId": "mbid:912241ed-7bf9-5ab4-af62-b2eede1437ba", "weight": 0.88, "mark": "good"},
+                ],
+                "blockedMarks": ["slop"],
+                "transitions": [
+                    {
+                        "from": "mbid:95142316-7154-4f25-bd45-224352617045",
+                        "to": "mbid:a21a9293-31f7-504c-9d9f-d4a4ec0bd6e2",
+                        "weight": 0.97,
+                    },
+                    {
+                        "from": "mbid:e941c1ff-3620-50f4-8590-9df10c78eceb",
+                        "to": "mbid:912241ed-7bf9-5ab4-af62-b2eede1437ba",
+                        "weight": 0.93,
+                    },
+                ],
+            },
+        ),
+        (
+            steward_priv,
+            {
+                "id": "lens:radio:classical-heavy",
+                "domain": "radio",
+                "name": "Classical, no fluff",
+                "summary": "5/4 orchestral thunder, Prokofiev bass menace, and synth-classical drive",
+                "issuer": steward_issuer,
+                "issuerHandle": "canon.steward",
+                "modelId": MODEL_ID,
+                "version": 1,
+                "createdAt": now_iso,
+                "subscribers": 356,
+                "completionRate": 0.93,
+                "anchors": [
+                    {"workId": "mbid:92c48433-431b-52c5-ba0a-02cb4086a048", "weight": 1.0, "mark": "good"},
+                    {"workId": "mbid:20462048-c5fa-5ab4-8c39-08baa105ed0a", "weight": 0.96, "mark": "good"},
+                    {"workId": "mbid:9db35866-fbe8-5540-92a0-852c87a51e04", "weight": 0.92, "mark": "good"},
+                    {"workId": "mbid:ab2c5006-d203-582c-9e3a-04d9726449b5", "weight": 0.90, "mark": "good"},
+                    {"workId": "mbid:1b9fd9b7-9ca2-5eb7-bed9-e5e447ecfb9b", "weight": 0.88, "mark": "good"},
+                ],
+                "blockedMarks": ["slop"],
+                "transitions": [
+                    {
+                        "from": "mbid:92c48433-431b-52c5-ba0a-02cb4086a048",
+                        "to": "mbid:20462048-c5fa-5ab4-8c39-08baa105ed0a",
+                        "weight": 0.96,
+                    },
+                    {
+                        "from": "mbid:9db35866-fbe8-5540-92a0-852c87a51e04",
+                        "to": "mbid:ab2c5006-d203-582c-9e3a-04d9726449b5",
+                        "weight": 0.94,
                     },
                 ],
             },

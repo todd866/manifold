@@ -63,8 +63,13 @@ export function validateCanonicalWorkId(workId: string, expectedDomain?: Manifol
 export function scanPayloadForLeaks(value: unknown, keyPath = 'root'): BoundaryVerdict {
   if (value === null || value === undefined) return { ok: true };
   if (typeof value === 'string') {
-    // Allow explicit HTTPS streamUrl on public-domain showcase items, while still blocking local paths & magnets
-    const isHttpsUrl = keyPath.endsWith('.streamUrl') && /^https:\/\/[a-z0-9.-]+\//i.test(value);
+    // Allow explicit HTTPS media/artwork catalog URLs, while still blocking local paths & magnets
+    const isHttpsUrl =
+      (keyPath.endsWith('.streamUrl') ||
+        keyPath.endsWith('.previewUrl') ||
+        keyPath.endsWith('.artUrl') ||
+        keyPath.endsWith('.appleMusicUrl')) &&
+      /^https:\/\/[a-z0-9.-]+\//i.test(value);
     if (FORBIDDEN_PATH_RE.test(value)) {
       return { ok: false, reason: `local filesystem path detected at ${keyPath}` };
     }

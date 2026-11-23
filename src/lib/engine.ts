@@ -58,6 +58,12 @@ export interface ManifoldWork {
   verifiedCanary?: number;
   mark?: 'good' | 'slop';
   streamUrl?: string;
+  previewUrl?: string;
+  artUrl?: string;
+  appleMusicUrl?: string;
+  shortTitle?: string;
+  hook?: string;
+  category?: string;
   durationSec?: number;
   energy?: number;
   heaviness?: number;
