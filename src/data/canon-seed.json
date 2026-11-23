@@ -3003,7 +3003,7 @@
       },
       "contributor": "ed25519:82PCkbYGhiH595pnzwEKVxg-hBZGsURhGzvpRPwYfLQ",
       "verifiedCanary": 0.996,
-      "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/98/Gymnopedie_No_1.ogg/Gymnopedie_No_1.ogg.mp3",
+      "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/6/68/Kevin_MacLeod_-_Erik_Satie_Gymnopedie_No_1.ogg/Kevin_MacLeod_-_Erik_Satie_Gymnopedie_No_1.ogg.mp3",
       "durationSec": 189,
       "energy": 0.12,
       "heaviness": 0.08
@@ -3125,7 +3125,7 @@
       },
       "contributor": "ed25519:82PCkbYGhiH595pnzwEKVxg-hBZGsURhGzvpRPwYfLQ",
       "verifiedCanary": 0.996,
-      "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/d3/Kimiko_Ishizaka_-_J.S._Bach_-_%27Open%27_Goldberg_Variations%2C_BWV_988_-_01_Aria.flac/Kimiko_Ishizaka_-_J.S._Bach_-_%27Open%27_Goldberg_Variations%2C_BWV_988_-_01_Aria.flac.mp3",
+      "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/e/e6/Kimiko_Ishizaka_-_01_-_Aria.ogg/Kimiko_Ishizaka_-_01_-_Aria.ogg.mp3",
       "durationSec": 300,
       "energy": 0.22,
       "heaviness": 0.14
@@ -3369,7 +3369,7 @@
       },
       "contributor": "ed25519:82PCkbYGhiH595pnzwEKVxg-hBZGsURhGzvpRPwYfLQ",
       "verifiedCanary": 0.996,
-      "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/47/BWV_1007_-_Prelude.ogg/BWV_1007_-_Prelude.ogg.mp3",
+      "streamUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
       "durationSec": 146,
       "energy": 0.34,
       "heaviness": 0.19
