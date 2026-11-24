@@ -784,6 +784,279 @@ RADIO_WORKS: list[dict[str, Any]] = [
 ]
 
 
+READER_WORKS: list[dict[str, Any]] = [
+    {
+        "workId": "gutenberg:1342",
+        "title": "Pride and Prejudice",
+        "creator": "Jane Austen",
+        "year": 1813,
+        "kind": "fiction · classic novel",
+        "subject": "Literature",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/1342.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/1342",
+        "summary": "Jane Austen's 1813 comedy of manners: Elizabeth Bennet and the proud Mr Darcy spar their way from prejudice to love in Regency England.",
+    },
+    {
+        "workId": "gutenberg:84",
+        "title": "Frankenstein; or, The Modern Prometheus",
+        "creator": "Mary Wollstonecraft Shelley",
+        "year": 1818,
+        "kind": "fiction · gothic sci-fi",
+        "subject": "Science & Ethics",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/84.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/84",
+        "summary": "Mary Shelley's 1818 gothic novel: a young scientist animates a creature from dead matter, then abandons it — with tragic consequences.",
+    },
+    {
+        "workId": "gutenberg:2701",
+        "title": "Moby-Dick; or, The Whale",
+        "creator": "Herman Melville",
+        "year": 1851,
+        "kind": "fiction · maritime epic",
+        "subject": "Literature",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/2701.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/2701",
+        "summary": "Herman Melville's 1851 epic of Captain Ahab's monomaniacal hunt for the white whale — a vast meditation on obsession, nature, and fate.",
+    },
+    {
+        "workId": "gutenberg:11",
+        "title": "Alice's Adventures in Wonderland",
+        "creator": "Lewis Carroll",
+        "year": 1865,
+        "kind": "fiction · fantasy",
+        "subject": "Literature",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/11.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/11",
+        "summary": "Lewis Carroll's 1865 nonsense classic: Alice tumbles down a rabbit-hole into a logic-bending world of talking creatures and mad tea-parties.",
+    },
+    {
+        "workId": "gutenberg:1661",
+        "title": "The Adventures of Sherlock Holmes",
+        "creator": "Arthur Conan Doyle",
+        "year": 1892,
+        "kind": "fiction · mystery",
+        "subject": "Diagnostic Deduction",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/1661.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/1661",
+        "summary": "Twelve of Arthur Conan Doyle's 1892 stories introducing the great detective and his method of ruthless clinical deduction, narrated by Dr Watson.",
+    },
+    {
+        "workId": "gutenberg:35",
+        "title": "The Time Machine",
+        "creator": "H. G. Wells",
+        "year": 1895,
+        "kind": "fiction · science fiction",
+        "subject": "Speculative Science",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/35.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/35",
+        "summary": "H. G. Wells's 1895 novella: a Victorian inventor travels to the year 802,701 and finds humanity split into the gentle Eloi and subterranean Morlocks.",
+    },
+    {
+        "workId": "gutenberg:23",
+        "title": "Narrative of the Life of Frederick Douglass",
+        "creator": "Frederick Douglass",
+        "year": 1845,
+        "kind": "history · memoir",
+        "subject": "History",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/23.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/23",
+        "summary": "The 1845 autobiography of Frederick Douglass, who escaped slavery to become a towering abolitionist orator and writer.",
+    },
+    {
+        "workId": "gutenberg:408",
+        "title": "The Souls of Black Folk",
+        "creator": "W. E. B. Du Bois",
+        "year": 1903,
+        "kind": "history · sociology",
+        "subject": "Sociology",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/408.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/408",
+        "summary": "W. E. B. Du Bois's 1903 essays on race in America, introducing 'double consciousness' and the metaphor of 'the veil'.",
+    },
+    {
+        "workId": "gutenberg:1228",
+        "title": "On the Origin of Species",
+        "creator": "Charles Darwin",
+        "year": 1859,
+        "kind": "science · biology",
+        "subject": "Evolution",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/1228.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/1228",
+        "summary": "Charles Darwin's 1859 work setting out evolution by natural selection — among the most influential books in the history of science.",
+    },
+    {
+        "workId": "gutenberg:205",
+        "title": "Walden, and On The Duty Of Civil Disobedience",
+        "creator": "Henry David Thoreau",
+        "year": 1854,
+        "kind": "essays · philosophy",
+        "subject": "Philosophy",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/205.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/205",
+        "summary": "Henry David Thoreau's 1854 account of two years living simply by Walden Pond — a founding text of self-reliance and nature writing.",
+    },
+    {
+        "workId": "gutenberg:1322",
+        "title": "Leaves of Grass",
+        "creator": "Walt Whitman",
+        "year": 1855,
+        "kind": "poetry · classic",
+        "subject": "Literature",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/1322.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/1322",
+        "summary": "Walt Whitman's ever-expanding book of poems (from 1855), a sprawling democratic hymn to the body, the self, and America.",
+    },
+    {
+        "workId": "gutenberg:55",
+        "title": "The Wonderful Wizard of Oz",
+        "creator": "L. Frank Baum",
+        "year": 1900,
+        "kind": "fiction · fantasy",
+        "subject": "Literature",
+        "format": "epub",
+        "mark": "good",
+        "epubUrl": "https://www.gutenberg.org/ebooks/55.epub3.images",
+        "openAccessUrl": "https://www.gutenberg.org/ebooks/55",
+        "summary": "L. Frank Baum's 1900 fairy tale: a Kansas girl and her dog are swept to the land of Oz and journey to the Emerald City.",
+    },
+    {
+        "workId": "arxiv:1706.03762",
+        "title": "Attention Is All You Need",
+        "creator": "Ashish Vaswani et al.",
+        "year": 2017,
+        "kind": "paper · machine learning",
+        "subject": "Systems & AI",
+        "format": "pdf",
+        "mark": "good",
+        "openAccessUrl": "https://arxiv.org/pdf/1706.03762",
+        "summary": "Introduces the Transformer sequence transduction architecture built entirely on multi-head self-attention without recurrence or convolutions.",
+    },
+    {
+        "workId": "doi:10.1038/nrn2787",
+        "title": "The free-energy principle: a unified brain theory?",
+        "creator": "Karl Friston",
+        "year": 2010,
+        "kind": "paper · theoretical neuroscience",
+        "subject": "Active Inference",
+        "format": "article",
+        "mark": "good",
+        "summary": "Synthesizes perception, action, attention, and learning as minimization of variational free-energy surprise under a generative model.",
+    },
+    {
+        "workId": "doi:10.1162/neco_a_00912",
+        "title": "Active Inference: A Process Theory",
+        "creator": "Karl Friston; Thomas FitzGerald; Francesco Rigoli; Philipp Schwartenbeck; Giovanni Pezzulo",
+        "year": 2017,
+        "kind": "paper · computational neuroscience",
+        "subject": "Active Inference",
+        "format": "article",
+        "mark": "good",
+        "openAccessUrl": "https://direct.mit.edu/neco/article/29/1/1/8207",
+        "summary": "Derives neuronal message passing and epistemic action selection from expected free energy over discrete partially observable Markov decision processes.",
+    },
+    {
+        "workId": "doi:10.1093/scan/nsw154",
+        "title": "The theory of constructed emotion: an active inference account of interoception and categorization",
+        "creator": "Lisa Feldman Barrett",
+        "year": 2016,
+        "kind": "paper · neuroscience",
+        "subject": "Interoception",
+        "format": "article",
+        "mark": "good",
+        "openAccessUrl": "https://academic.oup.com/scan/article/12/1/1/2823712",
+        "summary": "Accounts for affect and emotion concepts as allostatic predictive regulation of the internal milieu via Bayesian active inference.",
+    },
+    {
+        "workId": "doi:10.1007/s00429-012-0475-5",
+        "title": "Predictions not commands: active inference in the motor system",
+        "creator": "Rick A. Adams; Stewart Shipp; Karl J. Friston",
+        "year": 2012,
+        "kind": "paper · motor neurophysiology",
+        "subject": "Motor Control",
+        "format": "article",
+        "mark": "good",
+        "summary": "Reframes descending corticospinal projections as proprioceptive predictions resolved by spinal reflex arcs rather than motor commands.",
+    },
+    {
+        "workId": "doi:10.1136/jnnp.60.2.147",
+        "title": "Avoiding false positive diagnoses of motor neuron disease",
+        "creator": "R. J. Davenport; R. J. Swingler; A. M. Chancellor; C. P. Warlow",
+        "year": 1996,
+        "kind": "paper · clinical neurology",
+        "subject": "Clinical Reasoning",
+        "format": "article",
+        "mark": "good",
+        "summary": "Lessons from the Scottish Motor Neuron Disease Register quantifying mimics, red flags, and diagnostic traps in early MND recognition.",
+    },
+    {
+        "workId": "doi:10.1001/archneurol.2012.254",
+        "title": "Awaji criteria for the diagnosis of amyotrophic lateral sclerosis",
+        "creator": "Joaquim Costa; Michael Swash; Mamede de Carvalho",
+        "year": 2012,
+        "kind": "paper · clinical neurology",
+        "subject": "Clinical Reasoning",
+        "format": "article",
+        "mark": "good",
+        "summary": "Systematic review and meta-analysis comparing Awaji electrodiagnostic criteria sensitivity against revised El Escorial criteria in ALS.",
+    },
+    {
+        "workId": "pmid:32483848",
+        "title": "Identifying lithium-poisoned patients who may benefit from haemodialysis",
+        "creator": "Dominique Vodovar; Minh Le; Laurence Labat; Bruno Megarbane",
+        "year": 2020,
+        "kind": "paper · clinical toxicology",
+        "subject": "Clinical Reasoning",
+        "format": "article",
+        "mark": "good",
+        "summary": "Evaluates clinical and pharmacokinetic thresholds for extracorporeal lithium clearance in acute and chronic poisoning.",
+    },
+    {
+        "workId": "isbn:9780754615903",
+        "title": "Managing Maintenance Error: A Practical Guide",
+        "creator": "James T. Reason; Alan Hobbs",
+        "year": 2003,
+        "kind": "book · aviation safety",
+        "subject": "Safety Systems",
+        "format": "pdf",
+        "mark": "good",
+        "summary": "Analyses human factors, latent organizational conditions, and error traps in aircraft and complex engineering maintenance.",
+    },
+    {
+        "workId": "isbn:9780691140520",
+        "title": "The Bounds of Reason: Game Theory and the Unification of the Behavioral Sciences",
+        "creator": "Herbert Gintis",
+        "year": 2009,
+        "kind": "book · decision theory",
+        "subject": "Behavioral Science",
+        "format": "pdf",
+        "mark": "good",
+        "summary": "Models belief, epistemic game theory, social norms, and bounded rationality across economics, biology, and psychology.",
+    },
+]
+
+
 def load_cohort_open_works(limit_per_discipline: int = 3) -> list[dict[str, Any]]:
     works: list[dict[str, Any]] = []
     if not COHORT_STEP1.is_dir():
@@ -913,6 +1186,23 @@ def lookup_apple_music(title: str, creator: str) -> dict[str, str]:
 
 
 def main() -> None:
+    # Preserve existing Apple Music metadata for radio tracks when offline or rate-limited
+    prev_radio_meta: dict[str, dict[str, str]] = {}
+    if OUT_PATH.is_file():
+        try:
+            prev_seed = json.loads(OUT_PATH.read_text())
+            for pw in prev_seed.get("works", []):
+                if pw.get("domain") == "radio":
+                    kept = {
+                        k: pw[k]
+                        for k in ("artUrl", "previewUrl", "appleMusicUrl")
+                        if isinstance(pw.get(k), str) and pw[k].startswith("https://")
+                    }
+                    if kept:
+                        prev_radio_meta[pw["workId"]] = kept
+        except Exception:
+            pass
+
     cohort_works = load_cohort_open_works(limit_per_discipline=2)
     all_records: list[dict[str, Any]] = []
     for w in TV_WORKS:
@@ -925,13 +1215,20 @@ def main() -> None:
         w2 = dict(w)
         w2["title"] = w2["title"].strip()
         w2["domain"] = "radio"
+        for k, v in prev_radio_meta.get(w2["workId"], {}).items():
+            w2.setdefault(k, v)
         all_records.append(w2)
     for w in cohort_works:
         w2 = dict(w)
         w2["domain"] = "cohort"
         all_records.append(w2)
+    for w in READER_WORKS:
+        w2 = dict(w)
+        w2["title"] = w2["title"].strip()
+        w2["domain"] = "reader"
+        all_records.append(w2)
 
-    print(f"Embedding {len(all_records)} open works across tv/radio/cohort via local MLX EmbeddingGemma 2...")
+    print(f"Embedding {len(all_records)} open works across tv/radio/cohort/reader via local MLX EmbeddingGemma 2...")
     texts = [(f"{r['title']} ({r['creator']}, {r['kind']})", r["summary"]) for r in all_records]
     mat = embed_mlx_gemma(texts)  # (N, 768) float32 L2-normalized
 
@@ -944,7 +1241,7 @@ def main() -> None:
 
     # Per-domain 2D coordinates so each domain fills [-0.88, 0.88] cleanly on the instrument plot
     coords_2d = np.zeros((len(all_records), 2), dtype=np.float32)
-    for dom in ("tv", "radio", "cohort"):
+    for dom in ("tv", "radio", "cohort", "reader"):
         idxs = [i for i, r in enumerate(all_records) if r["domain"] == dom]
         sub = mat[idxs]
         sub_c = sub - sub.mean(axis=0, keepdims=True)
@@ -1040,10 +1337,17 @@ def main() -> None:
             "heaviness",
             "difficulty",
             "ladder",
+            "openAccessUrl",
+            "epubUrl",
+            "format",
+            "wordCount",
+            "subject",
         ):
             if r.get(opt_key) is not None:
                 entry[opt_key] = r[opt_key]
-        if dom == "radio":
+        if dom == "radio" and not (
+            entry.get("artUrl") and entry.get("previewUrl") and entry.get("appleMusicUrl")
+        ):
             am = lookup_apple_music(r.get("shortTitle") or r["title"], r["creator"])
             for k, v in am.items():
                 entry.setdefault(k, v)
@@ -1352,6 +1656,86 @@ def main() -> None:
                 "transitions": [],
             },
         ),
+        (
+            peer_priv,
+            {
+                "id": "lens:reader:open-classics",
+                "domain": "reader",
+                "name": "Open classics",
+                "summary": "Public-domain novels, detective reasoning, evolutionary theory, and essays",
+                "issuer": peer_issuer,
+                "issuerHandle": "archive.curator",
+                "modelId": MODEL_ID,
+                "version": 1,
+                "createdAt": now_iso,
+                "subscribers": 274,
+                "completionRate": 0.91,
+                "anchors": [
+                    {"workId": "gutenberg:84", "weight": 1.0, "mark": "good"},
+                    {"workId": "gutenberg:1228", "weight": 0.95, "mark": "good"},
+                    {"workId": "gutenberg:1661", "weight": 0.9, "mark": "good"},
+                    {"workId": "gutenberg:2701", "weight": 0.86, "mark": "good"},
+                ],
+                "blockedMarks": ["slop"],
+                "transitions": [
+                    {"from": "gutenberg:84", "to": "gutenberg:35", "weight": 0.94},
+                    {"from": "gutenberg:1228", "to": "gutenberg:205", "weight": 0.9},
+                ],
+            },
+        ),
+        (
+            steward_priv,
+            {
+                "id": "lens:reader:systems-and-science",
+                "domain": "reader",
+                "name": "Systems & natural philosophy",
+                "summary": "Active inference, attention architectures, game theory, and aviation safety engineering",
+                "issuer": steward_issuer,
+                "issuerHandle": "canon.steward",
+                "modelId": MODEL_ID,
+                "version": 1,
+                "createdAt": now_iso,
+                "subscribers": 342,
+                "completionRate": 0.93,
+                "anchors": [
+                    {"workId": "doi:10.1038/nrn2787", "weight": 1.0, "mark": "good"},
+                    {"workId": "doi:10.1162/neco_a_00912", "weight": 0.96, "mark": "good"},
+                    {"workId": "arxiv:1706.03762", "weight": 0.9, "mark": "good"},
+                    {"workId": "isbn:9780754615903", "weight": 0.88, "mark": "good"},
+                ],
+                "blockedMarks": ["slop"],
+                "transitions": [
+                    {"from": "doi:10.1038/nrn2787", "to": "doi:10.1162/neco_a_00912", "weight": 0.97},
+                    {"from": "isbn:9780754615903", "to": "isbn:9780691140520", "weight": 0.91},
+                ],
+            },
+        ),
+        (
+            med_priv,
+            {
+                "id": "lens:reader:clinical-evidence",
+                "domain": "reader",
+                "name": "Clinical reasoning & evidence",
+                "summary": "Diagnostic calibration, MND differential mimics, interoception, and acute toxicology",
+                "issuer": med_issuer,
+                "issuerHandle": "cohort.open",
+                "modelId": MODEL_ID,
+                "version": 1,
+                "createdAt": now_iso,
+                "subscribers": 298,
+                "completionRate": 0.90,
+                "anchors": [
+                    {"workId": "doi:10.1136/jnnp.60.2.147", "weight": 1.0, "mark": "good"},
+                    {"workId": "doi:10.1001/archneurol.2012.254", "weight": 0.96, "mark": "good"},
+                    {"workId": "doi:10.1093/scan/nsw154", "weight": 0.88, "mark": "good"},
+                    {"workId": "pmid:32483848", "weight": 0.85, "mark": "good"},
+                ],
+                "blockedMarks": ["slop"],
+                "transitions": [
+                    {"from": "doi:10.1136/jnnp.60.2.147", "to": "doi:10.1001/archneurol.2012.254", "weight": 0.96},
+                ],
+            },
+        ),
     ]
     signed_lenses = [sign_lens(lens_body, priv) for priv, lens_body in raw_lenses]
 
@@ -1367,7 +1751,7 @@ def main() -> None:
             "quarantinedBatches": 0,
             "meanCanaryCosine": 0.9964,
             "credits": 620,
-            "domains": ["tv", "radio"],
+            "domains": ["tv", "radio", "reader"],
             "updatedAt": now_iso,
         },
         {
@@ -1381,7 +1765,7 @@ def main() -> None:
             "quarantinedBatches": 0,
             "meanCanaryCosine": 0.9958,
             "credits": 480,
-            "domains": ["cohort"],
+            "domains": ["cohort", "reader"],
             "updatedAt": now_iso,
         },
         {
@@ -1395,7 +1779,7 @@ def main() -> None:
             "quarantinedBatches": 0,
             "meanCanaryCosine": 0.9921,
             "credits": 295,
-            "domains": ["tv", "radio"],
+            "domains": ["tv", "radio", "reader"],
             "updatedAt": now_iso,
         },
     ]

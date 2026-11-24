@@ -36,9 +36,13 @@ CANONICAL_PATTERNS = (
     re.compile(r"^cohort:[a-z0-9][a-z0-9:._-]{2,160}$", re.I),
     re.compile(r"^doi:10\.[0-9]{4,9}/[-._;()/:A-Za-z0-9]+$"),
     re.compile(r"^pmid:[1-9][0-9]{0,10}$"),
+    re.compile(r"^isbn:97[89][0-9]{10}$"),
+    re.compile(r"^ol:OL[1-9][0-9]{0,10}[WM]$"),
+    re.compile(r"^gutenberg:[1-9][0-9]{0,7}$"),
+    re.compile(r"^arxiv:(?:[0-9]{4}\.[0-9]{4,5}(?:v[0-9]+)?|[a-z-]+(?:\.[a-z]{2})?/[0-9]{7})$", re.I),
 )
 FORBIDDEN_EXT_RE = re.compile(
-    r"\.(?:mp4|m4v|mkv|avi|mov|ts|m2ts|webm|flac|m4a|mp3|wav|ogg|aac|alac|srt|vtt)\b",
+    r"\.(?:mp4|m4v|mkv|avi|mov|ts|m2ts|webm|flac|m4a|mp3|wav|ogg|aac|alac|srt|vtt|epub|pdf|azw3|mobi|djvu|chm|cbz|cbr|fb2|docx)\b",
     re.I,
 )
 FORBIDDEN_PATH_RE = re.compile(r"(?:/Users/|/Volumes/|/home/|/private/|[A-Za-z]:\\|\.\./|~/)", re.I)
@@ -333,6 +337,93 @@ def cmd_export_cohort(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_export_reader(args: argparse.Namespace) -> int:
+    space_path = Path(args.reader_space).expanduser()
+    if not space_path.is_file():
+        print(f"Reader space JSON not found: {space_path}", file=sys.stderr)
+        return 1
+    raw = json.loads(space_path.read_text())
+    entries_in = raw.get("items") or raw.get("works") or []
+    if isinstance(entries_in, dict):
+        entries_in = list(entries_in.values())
+
+    id_map: dict[str, str] = {}
+    if args.canonical_ids:
+        id_path = Path(args.canonical_ids).expanduser()
+        if id_path.is_file():
+            raw_map = json.loads(id_path.read_text())
+            if isinstance(raw_map, dict):
+                for k, v in raw_map.items():
+                    cid = v.get("canonicalId") if isinstance(v, dict) else v
+                    if isinstance(cid, str) and is_valid_canonical_id(cid):
+                        id_map[str(k)] = cid
+
+    local_to_canon: dict[str, str] = {}
+    for row in entries_in:
+        if not isinstance(row, dict):
+            continue
+        local_key = str(row.get("slug") or row.get("id") or row.get("workId") or "")
+        cand = str(row.get("workId") or row.get("canonicalId") or id_map.get(local_key) or "").strip()
+        if cand and is_valid_canonical_id(cand):
+            local_to_canon[local_key] = cand
+
+    exported: list[dict[str, Any]] = []
+    skipped = 0
+    seen: set[str] = set()
+    for row in entries_in:
+        if not isinstance(row, dict):
+            continue
+        local_key = str(row.get("slug") or row.get("id") or row.get("workId") or "")
+        canon_id = local_to_canon.get(local_key)
+        if not canon_id or canon_id in seen:
+            skipped += 1
+            continue
+        seen.add(canon_id)
+
+        nbs: list[dict[str, Any]] = []
+        for nb in (row.get("neighbours") or [])[:12]:
+            if isinstance(nb, dict):
+                nb_local = str(nb.get("workId") or nb.get("slug") or nb.get("id") or "")
+                nb_canon = nb_local if is_valid_canonical_id(nb_local) else local_to_canon.get(nb_local)
+                if nb_canon and nb_canon != canon_id:
+                    nbs.append({"workId": nb_canon, "sim": round(float(nb.get("sim") or nb.get("score") or 0), 4)})
+
+        item: dict[str, Any] = {
+            "workId": canon_id,
+            "domain": "reader",
+            "title": scrub_text(row.get("title") or canon_id, 180),
+            "creator": scrub_text(row.get("creator") or row.get("authors") or "Unknown", 140),
+            "year": int(row.get("year") or 2026),
+            "kind": scrub_text(row.get("kind") or row.get("genre") or "reader", 60),
+            "summary": scrub_text(row.get("summary") or row.get("description") or "", 300),
+            "neighbours": nbs,
+        }
+        if isinstance(row.get("vec32"), list) and len(row["vec32"]) == 32:
+            item["vec32"] = [int(v) for v in row["vec32"]]
+        if isinstance(row.get("vecFp16B64"), str) and row["vecFp16B64"]:
+            item["vecFp16B64"] = row["vecFp16B64"]
+        exported.append(item)
+        if args.limit and len(exported) >= args.limit:
+            break
+
+    ident = get_or_create_identity()
+    unsigned = {
+        "issuer": ident["issuer"],
+        "handle": args.handle,
+        "domain": "reader",
+        "modelId": args.model,
+        "recipeHash": args.recipe_hash,
+        "createdAt": utc_now_iso(),
+        "items": exported,
+    }
+    signed = sign_envelope(unsigned, ident["privateSeedB64Url"])
+    out_path = Path(args.out).expanduser()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(signed, indent=2, ensure_ascii=False) + "\n")
+    print(f"Exported {len(exported)} canonical Reader works to {out_path} ({skipped} unmapped/private omitted).")
+    return 0
+
+
 def cmd_pull_shard(args: argparse.Namespace) -> int:
     prefix = args.prefix.lower()
     url = f"{args.hub.rstrip('/')}/api/v1/shard/{prefix}"
@@ -398,9 +489,19 @@ def build_parser() -> argparse.ArgumentParser:
     co.add_argument("--out", required=True)
     co.set_defaults(func=cmd_export_cohort)
 
+    rd = sub.add_parser("export-reader", help="Export canonical ISBN/DOI/PMID/Gutenberg/arXiv works for Cohort Reader")
+    rd.add_argument("--reader-space", default="~/.local/state/cohort-reader-embed/reader-space.json")
+    rd.add_argument("--canonical-ids", default="~/.local/state/cohort-reader-embed/canonical-ids.json")
+    rd.add_argument("--model", default="embeddinggemma-2")
+    rd.add_argument("--recipe-hash", default="reader-multichunk-v1-mlx768")
+    rd.add_argument("--handle", default="local.reader")
+    rd.add_argument("--limit", type=int, default=500)
+    rd.add_argument("--out", required=True)
+    rd.set_defaults(func=cmd_export_reader)
+
     ps = sub.add_parser("pull-shard", help="Download a k-anonymous hex shard without disclosing inventory")
     ps.add_argument("prefix", help="1 or 2 hex prefix (e.g. a or a4)")
-    ps.add_argument("--domain", choices=["tv", "radio", "cohort"])
+    ps.add_argument("--domain", choices=["tv", "radio", "cohort", "reader"])
     ps.add_argument("--hub", default=DEFAULT_HUB)
     ps.set_defaults(func=cmd_pull_shard)
 

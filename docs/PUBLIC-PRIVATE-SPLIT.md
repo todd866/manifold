@@ -1,6 +1,6 @@
 # Public vs. Private Repository Split Pattern
 
-Every app in this ecosystem separates **shareable architecture and code** from **personal libraries, household config, and local infrastructure**. Whenever an app touches private collections or environment state, keep full working history in a private source repository and publish sanitized snapshots to the public mirror.
+Every app in this ecosystem separates **shareable architecture and code** from **personal libraries, household config, and local infrastructure**. Whenever an app touches private collections or environment state, keep full working history in a private source repository and publish sanitized snapshots to the public mirror — or keep the repository private-only when its core runtime relies on device-specific identifiers or host tooling (such as `todd866/onto-the-games-private`).
 
 ## What Goes Where
 
@@ -34,18 +34,19 @@ When exporting embeddings from private libraries into Manifold, [`tools/manifold
 
 - Strips `/Users/`, `/Volumes/`, Windows paths, and media extensions (`.mkv`, `.mp4`, `.m4a`, `.flac`, etc.).
 - Rejects raw file SHA-1/SHA-256 hex strings and private field names (`filepath`, `infohash`, `household`, `viewerName`).
-- Only exports works resolvable to public canonical prefixes (`wikidata:Q...`, `ia:...`, `imdb:tt...`, `yt:...`, `mbid:...`, `isrc:...`, `cohort:...`, `doi:...`, `pmid:...`).
+- Only exports works resolvable to public canonical prefixes (`wikidata:Q...`, `ia:...`, `imdb:tt...`, `yt:...`, `mbid:...`, `isrc:...`, `cohort:...`, `doi:...`, `pmid:...`, `isbn:...`, `ol:...`, `gutenberg:...`, `arxiv:...`).
 
 ## Repository Split Matrix
 
-| Project | Private Source Repo | Public Mirror Repo | Publish / Export Mechanism |
-|---|---|---|---|
-| Onto the TV | `todd866/onto-the-tv-full` | `todd866/onto-the-tv` | `scripts/publish-public.sh` |
-| Cohort | `todd866/md3` | `todd866/cohort` | Open export pipeline |
-| Fleet | `todd866/fleet-private` | `todd866/fleet` | `tools/public-export/publish.sh` |
-| Isobar | `todd866/isobar-private` / `isobar-data-private` | `todd866/isobar` / `isobar-data` | Split snapshot publish |
-| 6ian Radio | `todd866/music-radio` | `todd866/6ian-radio` | `tools/public-export/publish.sh` |
-| Music Core | `todd866/music-core-private` | `todd866/music-core` | `tools/public-export/publish.sh` |
-| Onto the Radio | `todd866/onto-the-radio-private` | `todd866/onto-the-radio` | `scripts/publish-public.sh` |
-| Manifold | `todd866/manifold-private` | `todd866/manifold` | `scripts/publish-public.sh` |
-| Glancebar | `todd866/glancebar-private` | `todd866/glancebar` | `scripts/publish-public.sh` |
+| Project | Private Source Repo | Public Mirror Repo | Publish / Export Mechanism | Notes |
+|---|---|---|---|---|
+| Onto the TV | `todd866/onto-the-tv-full` | `todd866/onto-the-tv` | `scripts/publish-public.sh` | Active video surface |
+| Onto the Radio | `todd866/onto-the-radio-private` | `todd866/onto-the-radio` | `scripts/publish-public.sh` | Active audio surface; pairs with Glancebar's OtR connector |
+| Onto the Games | `todd866/onto-the-games-private` | *None (private-only)* | *No public mirror* | Contains device-specific Switch Title IDs and `nxnative` host runtime (LAN/tailnet HTTPS `Range` pulls + isolated saves) |
+| Manifold | `todd866/manifold-private` | `todd866/manifold` | `scripts/publish-public.sh` | Public coordinate pool, signed lenses, and MCP hub |
+| Glancebar | `todd866/glancebar-private` | `todd866/glancebar` | `scripts/publish-public.sh` | Includes `tools/otr-connector/otr_connector.py` desktop library bridge & Mac remote control |
+| Music Core | `todd866/music-core-private` | `todd866/music-core` | `tools/public-export/publish.sh` | Shared audio analysis and curation core |
+| Cohort | `todd866/md3` | `todd866/cohort` | Open export pipeline | Active study & spaced-repetition surface (+ `cohort-reader`) |
+| Fleet | `todd866/fleet-private` | `todd866/fleet` | `tools/public-export/publish.sh` | Multi-machine orchestration and tooling |
+| Isobar | `todd866/isobar-private` / `isobar-data-private` | `todd866/isobar` / `isobar-data` | Split snapshot publish | Native Mac and web surface |
+| 6ian Radio *(legacy)* | `todd866/music-radio` | `todd866/6ian-radio` | `tools/public-export/publish.sh` | **Legacy / archived** — `6IAN` is retired and superseded by Onto the Radio + Glancebar's OtR connector |

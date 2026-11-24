@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ManifoldDomain } from '@/lib/boundary';
+import { parseManifoldDomain } from '@/lib/boundary';
 import { getManifoldHub } from '@/lib/engine';
 
 const CORS = {
@@ -25,11 +25,7 @@ export async function GET(
     );
   }
   const url = new URL(req.url);
-  const domainParam = url.searchParams.get('domain');
-  const domain =
-    domainParam === 'tv' || domainParam === 'radio' || domainParam === 'cohort'
-      ? (domainParam as ManifoldDomain)
-      : undefined;
+  const domain = parseManifoldDomain(url.searchParams.get('domain'));
   const hub = getManifoldHub();
   return NextResponse.json(hub.getShard(prefix, domain), { headers: CORS });
 }

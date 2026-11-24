@@ -30,6 +30,13 @@ function DomainGlyph({ domain, size = 12 }: { domain: ManifoldDomain; size?: num
       </svg>
     );
   }
+  if (domain === 'reader') {
+    return (
+      <svg width={size} height={size} viewBox="0 0 14 14" aria-label="Reader work">
+        <polygon points="7,1.8 12.2,11.6 1.8,11.6" fill="var(--accent-reader)" />
+      </svg>
+    );
+  }
   return (
     <svg width={size} height={size} viewBox="0 0 14 14" aria-label="Cohort concept">
       <rect x="2.2" y="2.2" width="9.6" height="9.6" rx="1.5" fill="var(--accent-cohort)" />
@@ -40,6 +47,7 @@ function DomainGlyph({ domain, size = 12 }: { domain: ManifoldDomain; size?: num
 function domainColor(domain: ManifoldDomain): string {
   if (domain === 'tv') return 'var(--accent-tv)';
   if (domain === 'radio') return 'var(--accent-radio)';
+  if (domain === 'reader') return 'var(--accent-reader)';
   return 'var(--accent-cohort)';
 }
 
@@ -186,6 +194,7 @@ export function ManifoldConsole({ works, lenses, contributors, mcpTools }: Props
       tv: works.filter((w) => w.domain === 'tv').length,
       radio: works.filter((w) => w.domain === 'radio').length,
       cohort: works.filter((w) => w.domain === 'cohort').length,
+      reader: works.filter((w) => w.domain === 'reader').length,
     }),
     [works],
   );
@@ -289,6 +298,7 @@ export function ManifoldConsole({ works, lenses, contributors, mcpTools }: Props
               ['tv', `TV ${counts.tv}`],
               ['radio', `Radio ${counts.radio}`],
               ['cohort', `Cohort ${counts.cohort}`],
+              ['reader', `Reader ${counts.reader}`],
             ] as const
           ).map(([d, label]) => (
             <button
@@ -430,6 +440,12 @@ export function ManifoldConsole({ works, lenses, contributors, mcpTools }: Props
                       )}
                       {w.domain === 'cohort' && (
                         <rect x={cx - 4.2} y={cy - 4.2} width={8.4} height={8.4} rx={1.4} fill={color} />
+                      )}
+                      {w.domain === 'reader' && (
+                        <polygon
+                          points={`${cx},${cy - 5.2} ${cx + 4.8},${cy + 4.2} ${cx - 4.8},${cy + 4.2}`}
+                          fill={color}
+                        />
                       )}
                     </g>
                   );

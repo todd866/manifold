@@ -21,13 +21,22 @@ test('boundary gate accepts valid canonical IDs and rejects local paths, extensi
   assert.equal(validateCanonicalWorkId('wikidata:Q752509', 'tv').ok, true);
   assert.equal(validateCanonicalWorkId('mbid:1b642322-7c90-4a8e-9b52-33f672941a64', 'radio').ok, true);
   assert.equal(validateCanonicalWorkId('cohort:cardiovascular-abo-preformed-antibodies:v1', 'cohort').ok, true);
+  assert.equal(validateCanonicalWorkId('isbn:9780754615903', 'reader').ok, true);
+  assert.equal(validateCanonicalWorkId('ol:OL12345W', 'reader').ok, true);
+  assert.equal(validateCanonicalWorkId('gutenberg:84', 'reader').ok, true);
+  assert.equal(validateCanonicalWorkId('arxiv:1706.03762', 'reader').ok, true);
+  assert.equal(validateCanonicalWorkId('doi:10.1038/nrn2787', 'reader').ok, true);
+  assert.equal(validateCanonicalWorkId('pmid:32483848', 'reader').ok, true);
 
   // Domain mismatch
   assert.equal(validateCanonicalWorkId('mbid:1b642322-7c90-4a8e-9b52-33f672941a64', 'tv').ok, false);
+  assert.equal(validateCanonicalWorkId('isbn:9780754615903', 'radio').ok, false);
 
-  // Forbidden local paths, media extensions, transfer URIs, and raw SHA-256
+  // Forbidden local paths, media/document extensions, transfer URIs, and raw SHA-256
   assert.equal(validateCanonicalWorkId('/Users/example/Movies/Sintel.mkv').ok, false);
   assert.equal(validateCanonicalWorkId('ia:Sintel.mp4').ok, false);
+  assert.equal(validateCanonicalWorkId('ia:Frankenstein.epub').ok, false);
+  assert.equal(validateCanonicalWorkId('ia:Paper.pdf').ok, false);
   assert.equal(
     validateCanonicalWorkId('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855').ok,
     false,
@@ -40,11 +49,24 @@ test('boundary gate accepts valid canonical IDs and rejects local paths, extensi
   });
   assert.equal(leak1.ok, false);
 
+  const leakDoc = scanPayloadForLeaks({
+    title: 'Book',
+    nested: { file: 'SecretBook.epub' },
+  });
+  assert.equal(leakDoc.ok, false);
+
   const leak2 = scanPayloadForLeaks({
     workId: 'wikidata:Q752509',
     household: 'Robin',
   });
   assert.equal(leak2.ok, false);
+
+  const openEpubOk = scanPayloadForLeaks({
+    workId: 'gutenberg:84',
+    epubUrl: 'https://www.gutenberg.org/ebooks/84.epub3.images',
+    openAccessUrl: 'https://arxiv.org/pdf/1706.03762.pdf',
+  });
+  assert.equal(openEpubOk.ok, true);
 });
 
 test('Ed25519 seed lenses verify cleanly and detect tampering', () => {
@@ -224,4 +246,25 @@ test('Lens ranking filters slop marks and MCP JSON-RPC 2.0 tools execute end-to-
     (pubRes?.result as { content: Array<{ text: string }> }).content[0].text,
   );
   assert.equal(pubData.ok, true);
+});
+
+test('reader domain seed works, signed lenses, and cross-domain resonances verify cleanly', () => {
+  const hub = createIsolatedManifoldHub();
+  const status = hub.getStatus();
+  assert.ok(status.byDomain.reader >= 20);
+  assert.ok(status.lensesByDomain.reader >= 3);
+
+  const readerLenses = hub.listLenses('reader');
+  for (const lens of readerLenses) {
+    assert.equal(lens.signatureValid, true);
+  }
+
+  const ranked = hub.applyLens({ lensId: 'lens:reader:systems-and-science', limit: 10 });
+  assert.ok(ranked && ranked.ranked.length > 0);
+  assert.ok(ranked.ranked.some((r) => r.work.workId === 'doi:10.1038/nrn2787'));
+
+  const nb = hub.getNeighbours('doi:10.1136/jnnp.60.2.147', 6);
+  assert.ok(nb);
+  assert.ok(nb.neighbours.length > 0);
+  assert.ok(nb.resonances.length > 0);
 });

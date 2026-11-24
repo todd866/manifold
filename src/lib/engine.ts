@@ -69,6 +69,11 @@ export interface ManifoldWork {
   heaviness?: number;
   difficulty?: string;
   ladder?: string;
+  openAccessUrl?: string;
+  epubUrl?: string;
+  format?: 'epub' | 'pdf' | 'article';
+  wordCount?: number;
+  subject?: string;
   staged?: boolean;
 }
 
@@ -212,6 +217,7 @@ class ManifoldHub {
       tv: allWorks.filter((w) => w.domain === 'tv').length,
       radio: allWorks.filter((w) => w.domain === 'radio').length,
       cohort: allWorks.filter((w) => w.domain === 'cohort').length,
+      reader: allWorks.filter((w) => w.domain === 'reader').length,
     };
     const shards = new Set(allWorks.map((w) => w.shard));
     return {
@@ -228,6 +234,7 @@ class ManifoldHub {
         tv: [...this.lenses.values()].filter((l) => l.domain === 'tv').length,
         radio: [...this.lenses.values()].filter((l) => l.domain === 'radio').length,
         cohort: [...this.lenses.values()].filter((l) => l.domain === 'cohort').length,
+        reader: [...this.lenses.values()].filter((l) => l.domain === 'reader').length,
       },
       verifiedContributors: [...this.contributors.values()].filter((c) => c.tier !== 'quarantined').length,
       landmarks: seedData.landmarks,

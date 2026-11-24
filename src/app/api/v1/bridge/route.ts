@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ManifoldDomain } from '@/lib/boundary';
+import { parseManifoldDomain } from '@/lib/boundary';
 import { getManifoldHub } from '@/lib/engine';
 
 const CORS = {
@@ -19,11 +19,7 @@ export async function GET(req: NextRequest) {
   if (!a || !b) {
     return NextResponse.json({ error: 'missing_endpoints', required: ['a', 'b'] }, { status: 400, headers: CORS });
   }
-  const domainParam = url.searchParams.get('domain');
-  const domain =
-    domainParam === 'tv' || domainParam === 'radio' || domainParam === 'cohort'
-      ? (domainParam as ManifoldDomain)
-      : undefined;
+  const domain = parseManifoldDomain(url.searchParams.get('domain'));
   const limit = Math.min(24, Math.max(1, Number(url.searchParams.get('limit') || '8')));
   const hub = getManifoldHub();
   const bridges = hub.findBridge(a, b, { domain, limit });

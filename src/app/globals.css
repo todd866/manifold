@@ -9,6 +9,7 @@
   --accent-tv: #e09f3e;
   --accent-radio: #4ea8de;
   --accent-cohort: #52b788;
+  --accent-reader: #a78bfa;
   --ok: #52b788;
   --warn: #e09f3e;
   --bad: #e05d5d;
@@ -25,6 +26,7 @@
   --accent-tv: #b56c09;
   --accent-radio: #1864ab;
   --accent-cohort: #237a50;
+  --accent-reader: #6d28d9;
   --ok: #237a50;
   --warn: #b56c09;
   --bad: #c92a2a;
@@ -42,6 +44,7 @@
     --accent-tv: #b56c09;
     --accent-radio: #1864ab;
     --accent-cohort: #237a50;
+    --accent-reader: #6d28d9;
     --ok: #237a50;
     --warn: #b56c09;
     --bad: #c92a2a;

@@ -93,14 +93,68 @@ test('manifold_sync.py exports TV, Music, and Cohort maps while stripping local 
   const cohortSigned = JSON.parse(fs.readFileSync(outCohort, 'utf8'));
   assert.equal(cohortSigned.items.length, 5);
   assert.equal(verifyCanonicalSignature(cohortSigned).ok, true);
+
+  // Reader export check: strips local paths, .epub/.pdf filenames, and md5-* private slugs
+  const dirtyReaderSpace = path.join(workDir, 'reader-space.json');
+  fs.writeFileSync(
+    dirtyReaderSpace,
+    JSON.stringify({
+      items: [
+        {
+          slug: 'md5-e1d635903602a30a478696e341002808',
+          workId: 'isbn:9780754615903',
+          title: 'Managing Maintenance Error.pdf',
+          creator: 'James T. Reason',
+          year: 2003,
+          kind: 'book · safety',
+          summary: 'From /Users/example/PaperLibrary/books/error.pdf',
+          vec32: new Array(32).fill(7),
+          neighbours: [
+            { slug: 'md5-private-only', sim: 0.9 },
+            { workId: 'doi:10.1038/nrn2787', sim: 0.81 },
+          ],
+        },
+        {
+          slug: 'md5-private-only',
+          title: 'Private Draft.epub',
+          summary: '/Volumes/Private/Draft.epub',
+        },
+      ],
+    }),
+  );
+  const outReader = path.join(workDir, 'reader-export.json');
+  execFileSync(
+    'python3',
+    [
+      path.join(ROOT, 'tools/manifold_sync.py'),
+      'export-reader',
+      '--reader-space',
+      dirtyReaderSpace,
+      '--out',
+      outReader,
+    ],
+    { env: { ...process.env, MANIFOLD_STATE_DIR: stateDir } },
+  );
+  const readerRaw = fs.readFileSync(outReader, 'utf8');
+  assert.equal(readerRaw.includes('/Users/'), false);
+  assert.equal(readerRaw.includes('/Volumes/'), false);
+  assert.equal(readerRaw.includes('.pdf'), false);
+  assert.equal(readerRaw.includes('.epub'), false);
+  assert.equal(readerRaw.includes('md5-private-only'), false);
+  const readerSigned = JSON.parse(readerRaw);
+  assert.equal(readerSigned.items.length, 1);
+  assert.equal(readerSigned.items[0].workId, 'isbn:9780754615903');
+  assert.equal(readerSigned.items[0].neighbours.length, 1);
+  assert.equal(verifyCanonicalSignature(readerSigned).ok, true);
 });
 
-test('stdio MCP servers for Manifold, Onto the TV, Onto the Radio, and Cohort respond cleanly', () => {
+test('stdio MCP servers for Manifold, Onto the TV, Onto the Radio, Cohort, and Cohort Reader respond cleanly', () => {
   for (const script of [
     'bin/manifold-mcp.ts',
     'bin/onto-tv-mcp.ts',
     'bin/onto-radio-mcp.ts',
     'bin/cohort-mcp.ts',
+    'bin/cohort-reader-mcp.ts',
   ]) {
     const input =
       JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize' }) +

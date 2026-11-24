@@ -1,10 +1,11 @@
 # Manifold Protocol & Hub Specification (v0.1)
 
-Manifold is the shared mathematical coordinate pool, signed lens registry, canary-verified reputation ledger, and MCP hub across three Bring-Your-Own-Content surfaces:
+Manifold is the shared mathematical coordinate pool, signed lens registry, canary-verified reputation ledger, and MCP hub across four Bring-Your-Own-Content surfaces:
 
 1. **Onto the TV (`tv`)** — films, series, shorts, and curated broadcast channels (`wikidata:Q...`, `ia:<slug>`, `imdb:tt...`, `yt:<id>`).
 2. **Onto the Radio (`radio`)** — songs, mixes, and mood/station steering (`mbid:<uuid>`, `isrc:<code>`).
 3. **Cohort (`cohort`)** — spaced-repetition study cards, clinical questions, and exam blueprints (`cohort:<id>`, `doi:<doi>`, `pmid:<id>`, `wikidata:Q...`).
+4. **Cohort Reader (`reader`)** — books, preprints, and research papers (`isbn:<isbn13>`, `ol:<OL...W|M>`, `gutenberg:<id>`, `arxiv:<id>`, `doi:<doi>`, `pmid:<id>`, `wikidata:Q...`, `ia:<slug>`).
 
 Zero copyrighted media bytes, local file paths, raw file hashes, or private watch/study histories ever enter Manifold.
 
@@ -23,9 +24,11 @@ Every item in Manifold is addressed by `(workId, modelId, recipeHash)`:
   - `isrc:<12-alnum>` — International Standard Recording Code
   - `cohort:<slug>` — open curriculum / question / concept identifier
   - `doi:<prefix>/<suffix>` or `pmid:<digits>` — scholarly literature
+  - `isbn:97[89]<10-digits>` or `ol:OL<digits>[WM]` — books and Open Library works
+  - `gutenberg:<digits>` or `arxiv:<id>` — public-domain ebooks and open preprints
 - **Forbidden inputs (hard reject)**:
   - Filesystem paths (`/Users/`, `/Volumes/`, `/home/`, `C:\`, `../`)
-  - Media container extensions (`.mp4`, `.mkv`, `.avi`, `.mov`, `.flac`, `.m4a`, `.mp3`, `.wav`, `.srt`)
+  - Media & document container extensions (`.mp4`, `.mkv`, `.avi`, `.mov`, `.flac`, `.m4a`, `.mp3`, `.wav`, `.srt`, `.epub`, `.pdf`, `.azw3`, `.mobi`, `.djvu`, `.chm`)
   - Bare 40-char SHA-1 / infohashes, 64-char file SHA-256s, or `magnet:` URIs
   - Household viewer names or per-user watch timestamps
 

@@ -27,7 +27,7 @@ export const MANIFOLD_MCP_TOOLS = [
   {
     name: 'manifold_status',
     description:
-      'Return Manifold pool status: work counts across tv/radio/cohort, supported embedding models, shard coverage, signed lenses, and verified contributors.',
+      'Return Manifold pool status: work counts across tv/radio/cohort/reader, supported embedding models, shard coverage, signed lenses, and verified contributors.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -37,11 +37,11 @@ export const MANIFOLD_MCP_TOOLS = [
   {
     name: 'manifold_search',
     description:
-      'Search canonical works and concepts in Manifold by domain (tv, radio, cohort) and free-text query.',
+      'Search canonical works, books, papers, and concepts in Manifold by domain (tv, radio, cohort, reader) and free-text query.',
     inputSchema: {
       type: 'object',
       properties: {
-        domain: { type: 'string', enum: ['tv', 'radio', 'cohort'] },
+        domain: { type: 'string', enum: ['tv', 'radio', 'cohort', 'reader'] },
         query: { type: 'string', description: 'Title, creator, discipline, genre, or canonical ID' },
         limit: { type: 'number', minimum: 1, maximum: 100 },
       },
@@ -51,12 +51,12 @@ export const MANIFOLD_MCP_TOOLS = [
   {
     name: 'manifold_neighbours',
     description:
-      'Return nearest semantic neighbours within the same domain plus cross-domain resonances (e.g. films <-> music <-> medical concepts) for a canonical workId.',
+      'Return nearest semantic neighbours within the same domain plus cross-domain resonances (e.g. films <-> music <-> books/papers <-> medical concepts) for a canonical workId.',
     inputSchema: {
       type: 'object',
       required: ['workId'],
       properties: {
-        workId: { type: 'string', description: 'Canonical ID such as wikidata:Q207626 or mbid:...' },
+        workId: { type: 'string', description: 'Canonical ID such as wikidata:Q207626, mbid:..., isbn:..., or doi:...' },
         k: { type: 'number', minimum: 1, maximum: 24 },
       },
       additionalProperties: false,
@@ -72,7 +72,7 @@ export const MANIFOLD_MCP_TOOLS = [
       properties: {
         workIdA: { type: 'string' },
         workIdB: { type: 'string' },
-        domain: { type: 'string', enum: ['tv', 'radio', 'cohort'] },
+        domain: { type: 'string', enum: ['tv', 'radio', 'cohort', 'reader'] },
         limit: { type: 'number', minimum: 1, maximum: 20 },
       },
       additionalProperties: false,
@@ -81,11 +81,11 @@ export const MANIFOLD_MCP_TOOLS = [
   {
     name: 'manifold_lenses',
     description:
-      'List Ed25519-signed curation lenses (TV channels, Radio stations, Cohort exam blueprints) with signature verification status.',
+      'List Ed25519-signed curation lenses (TV channels, Radio stations, Cohort exam blueprints, Reader reading lenses) with signature verification status.',
     inputSchema: {
       type: 'object',
       properties: {
-        domain: { type: 'string', enum: ['tv', 'radio', 'cohort'] },
+        domain: { type: 'string', enum: ['tv', 'radio', 'cohort', 'reader'] },
       },
       additionalProperties: false,
     },
